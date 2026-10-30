@@ -1,0 +1,14 @@
+{
+  "name": "bookmark-bridge",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Chrome / Edge 书签自动配对合并，双端确认后清理本机数据目录并显示实时状态",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "start": "node bridge/server.mjs",
+    "test": "node --test bridge/*.test.mjs"
+  }
+}

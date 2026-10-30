@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>双向书签桥 · 设置</title>
+  <link rel="stylesheet" href="options.css">
+  <script type="module" src="options.js"></script>
+</head>
+<body>
+  <main class="page">
+    <header class="page-header">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">桥</span><div><p class="eyebrow">CHROME + EDGE · 本机同步</p><h1>双向书签桥</h1></div></div>
+      <span class="connection" id="connection" role="status"><span class="status-dot" aria-hidden="true"></span><span id="connectionText">正在连接…</span></span>
+    </header>
+
+    <section class="intro" aria-labelledby="introTitle">
+      <div class="intro-heading"><p class="eyebrow">让两个浏览器，共享一份收藏</p><h2 id="introTitle">选好文件夹，剩下的交给书签桥。</h2><p>通过运行在这台电脑上的服务，在 Chrome 和 Edge 之间双向补齐书签。</p></div>
+      <ol class="steps">
+        <li><span class="step-number">1</span><div><strong>启动本机服务</strong><span>保持书签桥服务运行。</span></div></li>
+        <li><span class="step-number">2</span><div><strong>两个浏览器安装扩展</strong><span>在两边填入同一个服务令牌。</span></div></li>
+        <li><span class="step-number">3</span><div><strong>同一配对，各选文件夹</strong><span>两边在“配对 1”选择文件夹并同步。</span></div></li>
+      </ol>
+    </section>
+
+    <section class="stats" aria-label="同步状态">
+      <div class="stat"><span class="stat-label">同步状态</span><strong id="syncStatus">正在读取</strong><span class="stat-note" id="syncStatusNote">等待本机与另一浏览器的确认</span></div>
+      <div class="stat"><span class="stat-label">本机上次应用</span><strong id="lastSync">尚未同步</strong><span class="stat-note">仅显示当前浏览器的应用时间</span></div>
+      <div class="stat"><span class="stat-label">本机新增项目</span><strong id="addedCount">—</strong><span class="stat-note">最近一次补充的书签与文件夹</span></div>
+    </section>
+    <section class="service-status" aria-labelledby="serviceStatusTitle" aria-live="polite">
+      <h2 id="serviceStatusTitle">双方同步进度</h2>
+      <p id="serviceSummary">正在读取本机服务状态…</p>
+      <p id="cleanupStatus" class="help">双方应用所有配对后，才会删除整个临时数据目录。</p>
+      <ul id="pairProgress" class="pair-progress" aria-label="各配对应用进度"></ul>
+    </section>
+
+    <p id="loadError" class="notice error" role="alert" hidden></p>
+    <p id="syncError" class="notice error" role="status" hidden></p>
+    <p id="feedback" class="notice" role="status" aria-live="polite" hidden></p>
+
+    <form id="settingsForm" novalidate>
+      <fieldset id="settingsFields" disabled>
+        <legend class="sr-only">书签桥设置</legend>
+        <section class="panel" aria-labelledby="serviceTitle">
+          <div class="section-heading"><div><span class="section-number">01 / 连接</span><h2 id="serviceTitle">连接本机书签桥</h2></div><span class="local-label">仅限本机</span></div>
+          <label class="field-label" for="token">服务令牌</label>
+          <div class="token-field"><input id="token" name="token" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" maxlength="128" placeholder="粘贴服务启动时显示的 64 位令牌" aria-describedby="tokenHelp" required><button id="revealToken" class="button subtle" type="button" aria-controls="token" aria-pressed="false">显示令牌</button></div>
+          <p class="help" id="tokenHelp">从服务窗口复制令牌，在 Chrome 和 Edge 中填写同一份。双方确认完成后，磁盘上的令牌会随整个数据目录一起删除；当前服务仍可继续同步。清理后重启服务会生成新令牌，需在两边重新填写。</p>
+          <div class="auto-sync"><div><label for="autoSync">自动同步</label><p class="help" id="autoHelp">开启后约每分钟检查一次。手动同步尚未等到双方完成时，即使关闭此项，也会每分钟继续检查。</p></div><input class="switch" id="autoSync" name="autoSync" type="checkbox" role="switch" aria-describedby="autoHelp"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="mappingTitle">
+          <div class="section-heading"><div><span class="section-number">02 / 配对</span><h2 id="mappingTitle">选择要同步的文件夹</h2></div><button id="addMapping" class="button secondary" type="button">+ 添加配对</button></div>
+          <p class="section-copy">已为你准备好<strong>配对 1</strong>。在 Chrome 和 Edge 的同一配对编号下，各自选择一个本地文件夹，再分别点击“立即同步”。</p>
+          <div class="mapping-example"><span>Chrome · 本地文件夹</span><span class="example-pair">配对 1</span><span>Edge · 本地文件夹</span></div>
+          <p class="help">文件夹名称可以不同。两边需启用相同的配对编号；移除配对不会改变其他编号。添加时会使用最小的空闲编号，最多 50 对。</p>
+          <div id="mappings" class="mappings"></div>
+          <div id="emptyMappings" class="empty-state" hidden><strong>还没有文件夹配对</strong><p>点击“添加配对”，在两边相同的编号下选择要共享的收藏。</p></div>
+        </section>
+      </fieldset>
+      <div class="action-bar"><div class="save-note"><span id="dirtyIndicator">正在读取设置…</span><span>立即同步会先保存当前设置。</span></div><div class="actions"><button id="refreshFolders" class="button subtle" type="button">刷新文件夹</button><button id="saveSettings" class="button secondary" type="submit" disabled>保存设置</button><button id="syncNow" class="button primary" type="button" disabled>立即同步</button></div></div>
+    </form>
+
+    <aside class="guidance" aria-labelledby="guidanceTitle"><h2 id="guidanceTitle">开始之前，了解同步方式</h2><ul><li><strong>只补齐，不删除。</strong>按文件夹递归合并，同一路径下相同网址不重复添加，现有重复项不清理，同名子文件夹继续合并。</li><li><strong>等双方全部应用，再清理。</strong>Chrome 和 Edge 必须启用相同的配对编号，并分别应用所有配对的最新合并结果。之后服务才会删除整个临时数据目录，包括磁盘上的令牌。仅本机应用完成时不会清理。</li><li><strong>当前服务继续保留内存中的合并内容。</strong>删除和重命名不会传播，原有内容可能在下次同步时补回；移动或重命名可能产生额外副本。新的内容会再次临时写入磁盘，等双方确认后再删除目录。清理后重启服务，旧的内存内容消失，需要用新令牌重新配对，再从浏览器书签开始合并。</li><li><strong>两边都要保持运行。</strong>请打开 Chrome 和 Edge，并保持本机书签桥服务运行。在两边各点一次“立即同步”，等待期间会每分钟继续检查。服务窗口也会实时显示进度。</li></ul></aside>
+    <footer>双向书签桥 <span aria-hidden="true">·</span> 服务地址 <code>127.0.0.1:38473</code><span aria-hidden="true"> · </span>设置仅用于当前浏览器</footer>
+  </main>
+</body>
+</html>

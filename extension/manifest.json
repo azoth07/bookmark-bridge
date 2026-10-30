@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "双向书签桥 · Chrome / Edge",
+  "version": "1.2.0",
+  "description": "选择文件夹即可自动配对合并 Chrome 和 Edge 书签；两端确认完成后清除本机数据目录。",
+  "minimum_chrome_version": "109",
+  "permissions": ["bookmarks", "storage", "alarms", "notifications"],
+  "host_permissions": ["http://127.0.0.1:38473/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "icons": { "128": "notification.png" },
+  "action": { "default_title": "打开双向书签桥" },
+  "options_page": "options.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src http://127.0.0.1:38473"
+  }
+}
